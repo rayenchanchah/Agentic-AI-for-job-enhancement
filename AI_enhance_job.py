@@ -2,7 +2,6 @@ import requests
 import time
 import os
 import json
-from pathlib import Path
 try:
     from dotenv import load_dotenv
     has_dotenv = True
@@ -30,7 +29,6 @@ SAVE_RESULTS = os.getenv("SAVE_RESULTS", "false").lower() == "true"
 OUTPUT_DIR = os.getenv("OUTPUT_DIR", "job_results")
 
 def ask_ollama(prompt, max_retries=3):
-    """Send a prompt to the locally running Ollama model."""
     data = {
         "model": MODEL,
         "prompt": prompt,
@@ -45,11 +43,7 @@ def ask_ollama(prompt, max_retries=3):
             return response.json()["response"]
         except requests.exceptions.ConnectionError:
             if attempt == max_retries - 1:
-                print("\n❌ Error: Could not connect to Ollama server.")
-                print("   Please make sure Ollama is installed and running:")
-                print("   1. Install Ollama from https://ollama.com/")
-                print("   2. Run 'ollama serve' in a terminal")
-                print(f"   3. Pull the model with 'ollama pull {MODEL}'")
+                print("\nError: Could not connect to Ollama server.")
                 raise Exception("Failed to connect to Ollama server")
             time.sleep(2 ** attempt)  
         except requests.exceptions.RequestException as e:
@@ -148,7 +142,7 @@ def Agent_get_transition_recommendations(job_title, job_description):
     return ask_ollama(prompt)
 
 def Agent_enhance_job_with_ai(job_title):
-    print(f"\n🚀 Analyzing: {job_title}\n")
+    print(f"\nAnalyzing: {job_title}\n")
     results = {}
 
     try:
@@ -185,9 +179,9 @@ def Agent_enhance_job_with_ai(job_title):
         print(f"\nError : {str(e)}")
 
 def welcome():
-    print("\n" + "="*70)
+    print("\n" + "*"*70)
     print("AI JOB ENHANCEMENT TOOL")
-    print("="*70)
+    print("*"*70)
     print("Here, AI anaylzes job and provides AI enhancement recommendations.")
     print(f"Using model: {MODEL} | Temperature: {TEMPERATURE}")
 
