@@ -28,7 +28,7 @@ TEMPERATURE = float(os.getenv("TEMPERATURE", "0.7"))
 SAVE_RESULTS = os.getenv("SAVE_RESULTS", "false").lower() == "true"
 OUTPUT_DIR = os.getenv("OUTPUT_DIR", "job_results")
 
-def ask_ollama(prompt, max_retries=3):
+def ollama(prompt, max_retries=3):
     data = {
         "model": MODEL,
         "prompt": prompt,
@@ -43,7 +43,6 @@ def ask_ollama(prompt, max_retries=3):
             return response.json()["response"]
         except requests.exceptions.ConnectionError:
             if attempt == max_retries - 1:
-                print("\nError: Could not connect to Ollama server.")
                 raise Exception("Failed to connect to Ollama server")
             time.sleep(2 ** attempt)  
         except requests.exceptions.RequestException as e:
@@ -71,7 +70,7 @@ def Agent_get_job_description(job_title):
     Include key responsibilities, required skills, and typical industries.
     Format the output clearly with bullet points.
     """
-    return ask_ollama(prompt)
+    return ollama(prompt)
 
 def Agent_get_missions_and_tasks(job_description):
     prompt = f"""
@@ -82,7 +81,7 @@ def Agent_get_missions_and_tasks(job_description):
 
     Job Description: {job_description}
     """
-    return ask_ollama(prompt)
+    return ollama(prompt)
 
 def Agent_get_ai_enhancements(job_description):
     prompt = f"""
@@ -95,7 +94,7 @@ def Agent_get_ai_enhancements(job_description):
 
     Job: {job_description}
     """
-    return ask_ollama(prompt)
+    return ollama(prompt)
 
 def Agent_get_technology_recommendations(job_description):
     prompt = f"""
@@ -110,12 +109,12 @@ def Agent_get_technology_recommendations(job_description):
 
     Job: {job_description}
     """
-    return ask_ollama(prompt)
+    return ollama(prompt)
 
 def Agent_get_transition_recommendations(job_title, job_description):
     prompt = f"""
     Provide a detailed transition plan from a traditional {job_title} role
-    to an AI-augmented version. Include:
+    to an AI-augmented version. Mention:
 
     1) SKILLS TO LEARN:
        - Technical skills needed
@@ -139,7 +138,7 @@ def Agent_get_transition_recommendations(job_title, job_description):
 
     Base your recommendations on this job description: {job_description}
     """
-    return ask_ollama(prompt)
+    return ollama(prompt)
 
 def Agent_enhance_job_with_ai(job_title):
     print(f"\nAnalyzing: {job_title}\n")
@@ -167,13 +166,13 @@ def Agent_enhance_job_with_ai(job_title):
         results['transition_plan'] = Agent_get_transition_recommendations(job_title, results['job_desc'])
 
         # Output
-        print("\n" + "="*70)
+        print("\n" + "*"*70)
         print(f"**Job Description for {job_title}:**\n{results['job_desc']}\n")
         print(f" **Missions, Deliverables & Tasks:**\n{results['missions_tasks']}\n")
         print(f" **Technology Recommendations:**\n{results['tech_recommendations']}\n")
         print(f" **AI Augmentation Opportunities:**\n{results['ai_enhancements']}\n")
         print(f" **Transition to AI-Augmented Role:**\n{results['transition_plan']}\n")
-        print("="*70)
+        print("*"*70)
 
     except Exception as e:
         print(f"\nError : {str(e)}")
