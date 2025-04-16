@@ -125,6 +125,7 @@ def Agent_get_technology_recommendations(job_description):
     return ollama(prompt)
 
 def Agent_get_transition_recommendations(job_title, job_description, ai_enhancements=None, tech_recommendations=None):
+    # Prepare additional context if available
     additional_context = ""
     if ai_enhancements:
         additional_context += f"\n\nAI ENHANCEMENT OPPORTUNITIES IDENTIFIED:\n{ai_enhancements}"
@@ -172,23 +173,23 @@ def Agent_enhance_job_with_ai(job_title):
 
     try:
         # Agent 1: Job Description
-        print("Generating job description :")
+        print("Generating job description:")
         results['job_desc'] = Agent_get_job_description(job_title)
 
         # Agent 2: Missions & Tasks
-        print("Extracting missions and tasks :")
+        print("Extracting missions and tasks:")
         results['missions_tasks'] = Agent_get_missions_and_tasks(results['job_desc'])
 
         # Agent 3: Technology Recommendations
-        print("Recommending technologies :")
+        print("Recommending technologies:")
         results['tech_recommendations'] = Agent_get_technology_recommendations(results['job_desc'])
 
         # Agent 4: AI Enhancements
-        print("Identifying AI enhancements :")
+        print("Identifying AI enhancements:")
         results['ai_enhancements'] = Agent_get_ai_enhancements(results['job_desc'])
 
         # Agent 5: Transition recommendations
-        print("Creating transition plan :")
+        print("Creating transition plan:")
         results['transition_plan'] = Agent_get_transition_recommendations(
             job_title,
             results['job_desc'],
@@ -199,30 +200,29 @@ def Agent_enhance_job_with_ai(job_title):
         # Output
         print("\n" + "*"*70)
         print(f"**Job Description for {job_title}:**\n{results['job_desc']}\n")
-        print(f" **Missions, Deliverables & Tasks:**\n{results['missions_tasks']}\n")
-        print(f" **Technology Recommendations:**\n{results['tech_recommendations']}\n")
-        print(f" **AI Augmentation Opportunities:**\n{results['ai_enhancements']}\n")
-        print(f" **Transition to AI-Augmented Role:**\n{results['transition_plan']}\n")
+        print(f"**Missions, Deliverables & Tasks:**\n{results['missions_tasks']}\n")
+        print(f"**Technology Recommendations:**\n{results['tech_recommendations']}\n")
+        print(f"**AI Augmentation Opportunities:**\n{results['ai_enhancements']}\n")
+        print(f"**Transition to AI-Augmented Role:**\n{results['transition_plan']}\n")
         print("*"*70)
 
     except Exception as e:
-        print(f"\nError : {str(e)}")
+        print(f"\nError: {str(e)}")
 
 def welcome():
     print("\n" + "*"*70)
     print("AI JOB ENHANCEMENT TOOL")
     print("*"*70)
-    print("Here, AI anaylzes job and provides AI enhancement recommendations.")
+    print("Here, AI analyzes jobs and provides AI enhancement recommendations.")
     print(f"Using model: {MODEL} | Temperature: {TEMPERATURE}")
 
 # main program
 if __name__ == "__main__":
-
     welcome()
 
     while True:
         user_job = input("\nEnter a job title (or 'quit' to exit): ").strip()
-        if user_job.lower() in ('end', 'END'):
+        if user_job.lower() in ('quit', 'exit', 'end'):
             print("\nThank you for using the AI Job Enhancement Tool!\n")
             break
         Agent_enhance_job_with_ai(user_job)
