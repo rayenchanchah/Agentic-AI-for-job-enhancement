@@ -117,3 +117,4 @@ MIT
 ## Credits
 
 Developed as part of an internship project at EDLIGO.
+
